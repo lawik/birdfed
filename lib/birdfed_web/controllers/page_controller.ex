@@ -2,8 +2,9 @@ defmodule BirdfedWeb.PageController do
   use BirdfedWeb, :controller
 
   def home(conn, _params) do
-    # The home page is often custom made,
-    # so skip the default app layout.
-    render(conn, :home, layout: false)
+    IO.inspect(conn, label: "passed signature verification and all")
+    json(conn, %{status: "you aight"})
   end
+
+  # def missing(conn, _params), do: conn
 end

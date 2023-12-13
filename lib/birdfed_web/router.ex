@@ -10,29 +10,35 @@ defmodule BirdfedWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  alias Birdfed.Fed
+
   pipeline :fedi do
     plug :accepts, ["json"]
     plug Fedex.Webfinger.Plug, fetcher: &Fed.fetch_fingers/1
     plug Fedex.Activitystreams.Plug, fetcher: &Fed.fetch_fingers/1
   end
 
+  pipeline :fedi_signed do
+    plug Fedex.Activitypub.HttpSigned
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
 
-  scope "/" do
-    pipe_through :fedi
-  end
-
-  scope "/page", BirdfedWeb do
-    pipe_through :browser
+  scope "/inbox", BirdfedWeb do
+    pipe_through :fedi_signed
 
     get "/", PageController, :home
+    post "/", PageController, :home
   end
 
-  # Other scopes may use custom stacks.
-  scope "/api", BirdfedWeb do
-    pipe_through :api
+  scope "/", BirdfedWeb do
+    pipe_through :fedi
+    # get "/", PageController, :missing
+    # post "/", PageController, :missing
+    # put "/", PageController, :missing
+    # delete "/", PageController, :missing
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

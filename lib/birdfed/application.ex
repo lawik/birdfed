@@ -27,6 +27,12 @@ defmodule Birdfed.Application do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Birdfed.Supervisor]
+
+    Task.start(fn ->
+      :timer.sleep(3000)
+      Birdfed.Fed.setup()
+    end)
+
     Supervisor.start_link(children, opts)
   end
 
